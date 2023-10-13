@@ -1,6 +1,7 @@
 using Platformer.Mechanics;
 using Platformer.UI;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Platformer.UI
 {
@@ -67,6 +68,18 @@ namespace Platformer.UI
             {
                 ToggleMainMenu(show: !showMainCanvas);
             }
+        }
+
+        public void RestartGame()
+        {
+            SceneManager.LoadSceneAsync("MainScene");
+        }
+
+        public void ExitGame()
+        {
+            
+            SceneManager.LoadSceneAsync("MenuScene");
+            SceneManager.LoadSceneAsync("MainScene", LoadSceneMode.Additive);
         }
 
     }

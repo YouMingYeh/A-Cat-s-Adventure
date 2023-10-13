@@ -1,6 +1,7 @@
 using Platformer.Core;
 using Platformer.Model;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Platformer.Mechanics
 {
@@ -19,10 +20,10 @@ namespace Platformer.Mechanics
         //shared reference when the scene loads, allowing the model to be
         //conveniently configured inside the inspector.
         public PlatformerModel model = Simulation.GetModel<PlatformerModel>();
-
         void OnEnable()
         {
             Instance = this;
+            
         }
 
         void OnDisable()

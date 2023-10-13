@@ -17,6 +17,7 @@ namespace Platformer.Mechanics
         public TokenInstance[] tokens;
 
         float nextFrameTime = 0;
+        public int tokenCollected = 0;
 
         [ContextMenu("Find All Tokens")]
         void FindAllTokensInScene()
@@ -44,9 +45,11 @@ namespace Platformer.Mechanics
             if (Time.time - nextFrameTime > (1f / frameRate))
             {
                 //update all tokens with the next animation frame.
+  
                 for (var i = 0; i < tokens.Length; i++)
                 {
                     var token = tokens[i];
+                    
                     //if token is null, it has been disabled and is no longer animated.
                     if (token != null)
                     {
@@ -55,6 +58,7 @@ namespace Platformer.Mechanics
                         {
                             token.gameObject.SetActive(false);
                             tokens[i] = null;
+                            tokenCollected += 1;
                         }
                         else
                         {
@@ -62,6 +66,7 @@ namespace Platformer.Mechanics
                         }
                     }
                 }
+                Debug.Log(tokenCollected);
                 //calculate the time of the next frame.
                 nextFrameTime += 1f / frameRate;
             }
