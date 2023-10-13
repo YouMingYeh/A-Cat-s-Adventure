@@ -1,5 +1,6 @@
 using Platformer.Core;
 using Platformer.Mechanics;
+using UnityEngine;
 
 namespace Platformer.Gameplay
 {
@@ -13,6 +14,8 @@ namespace Platformer.Gameplay
 
         public override void Execute()
         {
+            Animator animator = enemy.GetComponent<Animator>();
+            animator.SetTrigger("death");
             enemy._collider.enabled = false;
             enemy.control.enabled = false;
             if (enemy._audio && enemy.ouch)

@@ -33,6 +33,7 @@ namespace Platformer.Mechanics
         /*internal new*/ public AudioSource audioSource;
         public Health health;
         public bool controlEnabled = true;
+        public Transform GetTransform() { return transform; }
 
         bool jump;
         Vector2 move;
@@ -49,6 +50,7 @@ namespace Platformer.Mechanics
         public ParticleSystem dust;
         public ParticleSystem landingDust;
         public ParticleSystem landingBurst;
+        
         void Awake()
         {
             health = GetComponent<Health>();
@@ -57,6 +59,7 @@ namespace Platformer.Mechanics
             spriteRenderer = GetComponent<SpriteRenderer>();
             animator = GetComponent<Animator>();
         }
+
 
         protected override void Update()
         {
@@ -68,19 +71,19 @@ namespace Platformer.Mechanics
 
                 if (canJumpTime > 0 && Input.GetButtonDown("Jump"))
                 {
-                    Debug.Log("Jump");
+
                     jumpState = JumpState.PrepareToJump;
                     dust.Play();    
                 }
                 else if (Input.GetButtonUp("Jump"))
                 {
-                    Debug.Log("stopJump");
+
                     stopJump = true;
                     Schedule<PlayerStopJump>().player = this;
                 }
                 else if (!IsGrounded && Input.GetButtonDown("QuickFall"))
                 {
-                    Debug.Log("QUICKFALL");
+
                     stopJump = true;
                     quickFall = true;
                 }
@@ -141,6 +144,36 @@ namespace Platformer.Mechanics
             }
         }
 
+        private void OnCollisionEnter2D(Collision2D collision)
+        {
+            if (collision.gameObject.CompareTag("Player"))
+            {
+                // Check if the objects are stuck (e.g., based on their positions, velocities, or other conditions).
+                if (AreObjectsStuck(collision))
+                {
+                    // Generate random values for X and Y components within the range of -1 to 1
+                    float randomX = Random.Range(-1f, 1f);
+                    float randomY = Random.Range(-1f, 1f);
+
+                    // Apply a flick by teleporting the object with a random offset
+                    Vector3 randomOffset = new Vector3(randomX, randomY, 0f);
+                    transform.position += randomOffset;
+                }
+            }
+        }
+
+        private bool AreObjectsStuck(Collision2D collision)
+        {
+            // Implement your logic to check if the objects are stuck.
+            // You can compare positions, velocities, or other conditions.
+            // For example, you can check the distance between the objects' centers.
+
+            float distance = Vector2.Distance(transform.position, collision.transform.position);
+
+            // Adjust the threshold as needed for your specific situation.
+            return distance < 0.1f;
+        }
+
         protected override void ComputeVelocity()
         {
 
@@ -183,5 +216,9 @@ namespace Platformer.Mechanics
             InFlight,
             Landed,
         }
+
+
+
     }
+
 }

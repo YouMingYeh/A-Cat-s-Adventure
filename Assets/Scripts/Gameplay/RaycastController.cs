@@ -1,4 +1,5 @@
 using Platformer.Core;
+using Platformer.Gameplay;
 using Platformer.Mechanics;
 using Platformer.Model;
 using System.Collections;
@@ -27,12 +28,40 @@ public class RaycastController : MonoBehaviour
             Vector2 origin = new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x,
                                          Camera.main.ScreenToWorldPoint(Input.mousePosition).y);
             RaycastHit2D hit = Physics2D.Raycast(origin, Vector2.zero, 0f);
-            if (hit.transform.gameObject.CompareTag("Player") && model.player.controlEnabled) 
+            if (hit && model.player.controlEnabled)
             {
-                UpdateFocus(hit.transform.gameObject);
+                GameObject hitGameObject = hit.transform.gameObject;
+                if (hitGameObject != null)
+                {
+                    if (hitGameObject.CompareTag("Player") && model.player.controlEnabled)
+                    {
+                        UpdateFocus(hitGameObject);
+                    }
+                }
             }
-            //else if(hit.transform.CompareTag())
         }
+    }
+
+    private void CheckAlive()
+    {
+        
+        var player = model.player;
+        if (player.health.IsAlive)
+        {
+            return;
+        }
+        player.collider2d.enabled = true;
+        player.controlEnabled = false;
+        if (player.audioSource && player.respawnAudio)
+            player.audioSource.PlayOneShot(player.respawnAudio);
+        player.health.Increment();
+        player.Teleport(model.spawnPoint.transform.position);
+        //player.jumpState = PlayerController.JumpState.Grounded;
+        player.jumpState = PlayerController.JumpState.InFlight;
+        player.animator.SetBool("dead", false);
+        model.virtualCamera.m_Follow = player.transform;
+        model.virtualCamera.m_LookAt = player.transform;
+        Simulation.Schedule<EnablePlayerInput>(2f);
     }
     private void UpdateFocus(GameObject hitGameObject)
     {
@@ -46,8 +75,10 @@ public class RaycastController : MonoBehaviour
                 GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
                 Color newColor;
                 PlayerController playerController;
+                GameObject temp = players[0];
                 foreach (GameObject p in players)
                 {
+                    
                     if (p != null)
                     {
                         playerController = p.GetComponent<PlayerController>();
@@ -58,14 +89,14 @@ public class RaycastController : MonoBehaviour
 
                         if (playerController != null)
                         {
-                            Debug.Log("Changing control for player: " + playerController.gameObject.name);
+
                             if(playerController.controlEnabled)
                             {
-                                SpawnPoint.transform.position = p.transform.position + new Vector3(0, 1.0f, 0);
+                                //SpawnPoint.transform.position = p.transform.position + new Vector3(0, 1.0f, 0);
                                 playerController.ChangeControlEnability(false);
                             }   
                         }
-
+                        temp = p;
                     }
                 }
 
@@ -81,6 +112,7 @@ public class RaycastController : MonoBehaviour
                     model.player = playerController;
                     model.virtualCamera.m_LookAt = selected.transform;
                     model.virtualCamera.m_Follow = selected.transform;
+                    //CheckAlive();
                 }
 
 

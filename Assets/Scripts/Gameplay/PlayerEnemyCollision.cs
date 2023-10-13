@@ -25,6 +25,8 @@ namespace Platformer.Gameplay
             if (willHurtEnemy)
             {
                 var enemyHealth = enemy.GetComponent<Health>();
+                Animator animator = enemy.GetComponent<Animator>();
+                animator.SetTrigger("hurt");
                 if (enemyHealth != null)
                 {
                     enemyHealth.Decrement();
@@ -35,6 +37,7 @@ namespace Platformer.Gameplay
                     }
                     else
                     {
+                        
                         player.Bounce(7);
                     }
                 }
@@ -46,7 +49,25 @@ namespace Platformer.Gameplay
             }
             else
             {
-                Schedule<PlayerDeath>();
+                if(player.health != null)
+                {
+                    
+                    player.animator.SetTrigger("hurt");
+                    player.health.Decrement();
+                    if (player.health.GetCurrent()<=0)
+                    {
+                        Debug.Log(player.health.GetCurrent());
+                        var ev = Schedule<PlayerDeath>();
+                        ev.playerController = player;
+                    }
+                }
+                else
+                {
+                    player.animator.SetTrigger("hurt");
+                    var ev = Schedule<PlayerDeath>();
+                    ev.playerController = player;
+                }
+                
             }
         }
     }

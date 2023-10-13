@@ -13,10 +13,11 @@ namespace Platformer.Gameplay
         public DeathZone deathzone;
 
         PlatformerModel model = Simulation.GetModel<PlatformerModel>();
-
+        public PlayerController playerController;
         public override void Execute()
         {
-            Simulation.Schedule<PlayerDeath>(0);
+            var ev = Simulation.Schedule<PlayerDeath>(0);
+            ev.playerController = playerController;
         }
     }
 }

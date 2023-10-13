@@ -66,7 +66,6 @@ namespace Platformer.Mechanics
                         }
                     }
                 }
-                Debug.Log(tokenCollected);
                 //calculate the time of the next frame.
                 nextFrameTime += 1f / frameRate;
             }
