@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.Rendering.DebugUI;
 
 public class AnimatedImageUI : MonoBehaviour
 {
@@ -37,7 +38,10 @@ public class AnimatedImageUI : MonoBehaviour
                 m_IndexSprite = 0;
             }
             else
+            {
                 Func_StopUIAnim();
+                m_IndexSprite = m_SpriteArray.Length - 1;
+            }
         }
         m_Image.sprite = m_SpriteArray[m_IndexSprite];
         m_Image.rectTransform.sizeDelta = new Vector2(m_Image.sprite.rect.width, m_Image.sprite.rect.height);
