@@ -5,6 +5,7 @@ using Platformer.Gameplay;
 using static Platformer.Core.Simulation;
 using Platformer.Model;
 using Platformer.Core;
+using Unity.VisualScripting;
 
 namespace Platformer.Mechanics
 {
@@ -50,6 +51,8 @@ namespace Platformer.Mechanics
         public ParticleSystem dust;
         public ParticleSystem landingDust;
         public ParticleSystem landingBurst;
+
+        Rigidbody2D rb;
         
         void Awake()
         {
@@ -58,6 +61,7 @@ namespace Platformer.Mechanics
             collider2d = GetComponent<Collider2D>();
             spriteRenderer = GetComponent<SpriteRenderer>();
             animator = GetComponent<Animator>();
+            rb = GetComponent<Rigidbody2D>();
         }
 
 
@@ -146,33 +150,27 @@ namespace Platformer.Mechanics
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
+            if(collision.gameObject.CompareTag("Player"))
+            {
+                Vector2 collisionPoint = collision.GetContact(0).point; // 获取碰撞点
+                Vector3 targetPosition = transform.position;
+                Vector3 separationVector = (transform.position - (Vector3)collisionPoint).normalized;
+                float separationDistance = 0.1f; // 你可以调整分开的距离
+
+                targetPosition += separationVector * separationDistance;
+                targetPosition.z = 1;
+                Debug.Log(separationVector);
+
+            }
             if (collision.gameObject.CompareTag("Player"))
             {
-                // Check if the objects are stuck (e.g., based on their positions, velocities, or other conditions).
-                if (AreObjectsStuck(collision))
-                {
-                    // Generate random values for X and Y components within the range of -1 to 1
-                    float randomX = Random.Range(-1f, 1f);
-                    float randomY = Random.Range(-1f, 1f);
-
-                    // Apply a flick by teleporting the object with a random offset
-                    Vector3 randomOffset = new Vector3(randomX, randomY, 0f);
-                    transform.position += randomOffset;
-                }
+                Vector2 collisionNormal = collision.GetContact(0).normal;
+                float restitution = 0.0f;
+                Vector2 reflectedVelocity = Vector2.Reflect(velocity, collisionNormal) * restitution;
+                rb.velocity = reflectedVelocity;
             }
         }
 
-        private bool AreObjectsStuck(Collision2D collision)
-        {
-            // Implement your logic to check if the objects are stuck.
-            // You can compare positions, velocities, or other conditions.
-            // For example, you can check the distance between the objects' centers.
-
-            float distance = Vector2.Distance(transform.position, collision.transform.position);
-
-            // Adjust the threshold as needed for your specific situation.
-            return distance < 0.1f;
-        }
 
         protected override void ComputeVelocity()
         {
@@ -207,7 +205,7 @@ namespace Platformer.Mechanics
 
             targetVelocity = move * maxSpeed;
         }
-
+        
         public enum JumpState
         {
             Grounded,
@@ -216,9 +214,6 @@ namespace Platformer.Mechanics
             InFlight,
             Landed,
         }
-
-
-
     }
 
 }

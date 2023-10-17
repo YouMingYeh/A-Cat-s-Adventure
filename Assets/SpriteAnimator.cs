@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class SpriteAnimator : MonoBehaviour
@@ -10,11 +12,13 @@ public class SpriteAnimator : MonoBehaviour
     public bool loop = true;
     public int loopFromFrame = 0;
     public bool isPlaying = false;
-
-    private int currentFrame = 0;
+    public bool isReversed = false;
+    public int currentFrame = 0;
     private float timer = 0f;
-    
-   
+
+    private Sprite[] originalSprites;
+    private Sprite[] reversedSprites;
+
 
     private void Start()
     {
@@ -23,11 +27,16 @@ public class SpriteAnimator : MonoBehaviour
             Debug.LogError("SpriteRenderer or animation sprites not set!");
             isPlaying = false;
         }
+        originalSprites = animationSprites;
+        reversedSprites = new Sprite[animationSprites.Length];
+        Array.Copy(originalSprites, reversedSprites, originalSprites.Length);
+        Array.Reverse(reversedSprites);
     }
 
     private void Update()
     {
-        if (isPlaying && animationSprites.Length > 0)
+        Sprite[] sprites = isReversed ? reversedSprites : originalSprites;
+        if (isPlaying && sprites.Length > 0)
         {
             timer += Time.deltaTime;
             float frameDuration = 1f / frameRate;
@@ -37,7 +46,7 @@ public class SpriteAnimator : MonoBehaviour
                 timer = 0f;
                 currentFrame++;
 
-                if (currentFrame >= animationSprites.Length)
+                if (currentFrame >= sprites.Length)
                 {
                     if (loop)
                     {
@@ -45,13 +54,14 @@ public class SpriteAnimator : MonoBehaviour
                     }
                     else
                     {
+                        
                         isPlaying = false;
-                        // You can add a callback or perform some action when the animation ends here.
                     }
                 }
-
-                spriteRenderer.sprite = animationSprites[currentFrame];
+                if(currentFrame < sprites.Length)
+                    spriteRenderer.sprite = sprites[currentFrame];
             }
+            
         }
     }
 
