@@ -159,8 +159,7 @@ namespace Platformer.Mechanics
 
                 targetPosition += separationVector * separationDistance;
                 targetPosition.z = 1;
-                Debug.Log(separationVector);
-
+                //Debug.Log(separationVector);
             }
             if (collision.gameObject.CompareTag("Player"))
             {

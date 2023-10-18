@@ -32,7 +32,7 @@ public class ButtonController : MonoBehaviour
                 if (other.transform.localScale.x < 5.0f)
                 {
 
-                    other.transform.localScale = other.transform.localScale + Vector3.one * 0.01f;
+                    other.transform.localScale = other.transform.localScale * 1.01f;
 
                 }
             } 
@@ -41,7 +41,7 @@ public class ButtonController : MonoBehaviour
                 if (other.transform.localScale.x > 0.3f)
                 {
 
-                    other.transform.localScale = other.transform.localScale - Vector3.one * 0.01f;
+                    other.transform.localScale = other.transform.localScale / 1.01f;
 
                 }
             }

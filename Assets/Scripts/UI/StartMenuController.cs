@@ -5,24 +5,11 @@ using UnityEngine.SceneManagement;
 
 public class StartMenuController : MonoBehaviour
 {
-    public GameObject gameMenu;
-    private void Start()
-    {
-        gameMenu.SetActive(true);
-    }
     public void gameStart()
     {
-        
+        StaticClass.IsRestart = false;
+        StaticClass.IsStarted = true;
         SceneManager.LoadSceneAsync("MainScene");
-    }
-
-    public void Update()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            Debug.Log("click");
-        }
-
     }
 
 }

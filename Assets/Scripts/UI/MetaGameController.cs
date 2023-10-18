@@ -25,12 +25,76 @@ namespace Platformer.UI
         /// The game controller.
         /// </summary>
         public GameController gameController;
-
+        
         bool showMainCanvas = false;
+
+        bool showEndCanvas = false;
+        public Canvas EndCanvas;
+
+        bool showStartCanvas = true;
+        public Canvas StartCanvas;
+
+        public void ToggleMenuCanvas()
+        {
+            if (showStartCanvas) //close
+            {
+                Time.timeScale = 1;
+                StartCanvas.gameObject.SetActive(false);
+                foreach (var i in gamePlayCanvasii) i.gameObject.SetActive(true);
+            }
+            else //open
+            {
+                Time.timeScale = 0;
+                StartCanvas.gameObject.SetActive(true);
+                foreach (var i in gamePlayCanvasii) i.gameObject.SetActive(false);
+            }
+        }
+        
+
+        public void ToggleEndCanvas()
+        {
+            if (showEndCanvas) //close
+            {
+                Time.timeScale = 1;
+                EndCanvas.gameObject.SetActive(false);
+                foreach (var i in gamePlayCanvasii) i.gameObject.SetActive(true);
+            }
+            else //open
+            {
+                Time.timeScale = 0;
+                EndCanvas.gameObject.SetActive(true);
+                foreach (var i in gamePlayCanvasii) i.gameObject.SetActive(false);
+            }
+        }
 
         void OnEnable()
         {
-            _ToggleMainMenu(showMainCanvas);
+
+            
+            if (StaticClass.IsRestart)
+            {
+                Time.timeScale = 1;
+                mainMenu.gameObject.SetActive(false);
+                foreach (var i in gamePlayCanvasii) i.gameObject.SetActive(false);
+            }
+            else
+            {
+                Time.timeScale = 1;
+                mainMenu.gameObject.SetActive(false);
+                foreach (var i in gamePlayCanvasii) i.gameObject.SetActive(true);
+            }
+
+            if(StaticClass.IsStarted)
+            {
+                StartCanvas.gameObject.SetActive(false);
+
+            } else
+            {
+                StartCanvas.gameObject.SetActive(true);
+                mainMenu.gameObject.SetActive(false);
+                foreach (var i in gamePlayCanvasii) i.gameObject.SetActive(false);
+            }
+           
         }
 
         /// <summary>
@@ -45,6 +109,11 @@ namespace Platformer.UI
             }
         }
 
+        public void OpenMainMenu()
+        {
+            mainMenu.gameObject.SetActive(true);
+        }
+
         void _ToggleMainMenu(bool show)
         {
             if (show)
@@ -57,7 +126,8 @@ namespace Platformer.UI
             {
                 Time.timeScale = 1;
                 mainMenu.gameObject.SetActive(false);
-                foreach (var i in gamePlayCanvasii) i.gameObject.SetActive(true);
+                if(!showStartCanvas)
+                    foreach (var i in gamePlayCanvasii) i.gameObject.SetActive(true);
             }
             this.showMainCanvas = show;
         }
@@ -72,14 +142,19 @@ namespace Platformer.UI
 
         public void RestartGame()
         {
+            StaticClass.IsRestart = false;
+            StaticClass.IsStarted = true;
+
             SceneManager.LoadSceneAsync("MainScene");
         }
 
         public void ExitGame()
         {
+            StaticClass.IsRestart = true;
+            StaticClass.IsStarted = false;
+            //SceneManager.LoadSceneAsync("MenuScene");
+            SceneManager.LoadSceneAsync("MainScene");
             
-            SceneManager.LoadSceneAsync("MenuScene");
-            SceneManager.LoadSceneAsync("MainScene", LoadSceneMode.Additive);
         }
 
     }

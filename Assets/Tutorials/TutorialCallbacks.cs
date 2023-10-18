@@ -53,7 +53,7 @@ namespace Unity.Tutorials
 
         public void StartTutorial(Tutorial tutorial)
         {
-            TutorialManager.Instance.StartTutorial(tutorial);
+            //TutorialManager.Instance.StartTutorial(tutorial);
         }
     }
 }

@@ -12,6 +12,9 @@ public class CheckPointController : MonoBehaviour
     public SpriteAnimator animToPlay;
     public SpriteAnimator animToStop;
 
+    public AudioClip audioClip;
+    public AudioSource audioSource;
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision != null && !isChecked)
@@ -19,6 +22,7 @@ public class CheckPointController : MonoBehaviour
             if (collision.transform.CompareTag("Player"))
             {
                 Debug.Log("checkpoint checked!");
+                audioSource.PlayOneShot(audioClip);
                 GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
                 var cnt = 0;
                 foreach (GameObject player in players)
